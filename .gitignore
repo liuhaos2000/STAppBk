@@ -1,0 +1,11 @@
+# Python 
+*.pyc
+*.egg
+.DS_Store
+*.log
+__pycache__/
+venv/
+env/
+dist/
+build/
+*.swp
