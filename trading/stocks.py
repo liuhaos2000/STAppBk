@@ -8,7 +8,7 @@ def get_stocks():
     # 模拟股票数据
     stocks = [
         {"symbol": "000001", "price": 150},
-        {"symbol": "600941", "price": 3400},
+        {"symbol": "600941", "price": 340},
     ]
     return stocks
 
@@ -49,17 +49,17 @@ def get_stock_analysis(symbol):
     }
     return analysis_data
 
-# 测试其他股票代码和日期范围1
+# 测试其他股票代码和日期范围
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    print(get_stock_analysis("000001.SZ"))
-    print(get_stock_analysis("600941.SH"))
+    print(get_stock_analysis("000001"))
+    print(get_stock_analysis("600941"))
 
     # 动态计算开始日期和结束日期
     end_date = datetime.today().strftime('%Y%m%d')
     start_date = (datetime.today() - timedelta(days=365)).strftime('%Y%m%d')
 
     # 使用 akshare 获取股票数据
-    stock_zh_a_hist_df = ak.stock_zh_a_hist(symbol="000001.SZ", period="daily", start_date=start_date, end_date=end_date, adjust="")
+    stock_zh_a_hist_df = ak.stock_zh_a_hist(symbol="000001", period="daily", start_date=start_date, end_date=end_date, adjust="")
     print(stock_zh_a_hist_df)
 
