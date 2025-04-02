@@ -17,7 +17,7 @@ def get_stock_analysis(symbol):
 
     # 动态计算开始日期和结束日期
     end_date = datetime.today().strftime('%Y%m%d')
-    start_date = (datetime.today() - timedelta(days=30)).strftime('%Y%m%d')
+    start_date = (datetime.today() - timedelta(days=365)).strftime('%Y%m%d')
 
     try:
         # 使用 akshare 获取股票数据
