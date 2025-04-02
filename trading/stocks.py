@@ -39,8 +39,8 @@ def get_stock_analysis(symbol):
     hist['MACD_signal'] = macd.macd_signal()
     hist['MACD_diff'] = macd.macd_diff()
 
-    # 计算 RSI 指标
-    rsi = ta.momentum.RSIIndicator(hist['收盘'])
+    # 计算 RSI 指标，使用周期 6
+    rsi = ta.momentum.RSIIndicator(hist['收盘'], window=6)
     hist['RSI'] = rsi.rsi()
 
     # 将 NaN 替换为 0
