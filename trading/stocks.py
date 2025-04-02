@@ -17,7 +17,7 @@ def get_stock_analysis(symbol):
 
     # 动态计算开始日期和结束日期
     end_date = datetime.today().strftime('%Y%m%d')
-    start_date = (datetime.today() - timedelta(days=60)).strftime('%Y%m%d')
+    start_date = (datetime.today() - timedelta(days=30)).strftime('%Y%m%d')
 
     try:
         # 使用 akshare 获取股票数据
@@ -39,12 +39,19 @@ def get_stock_analysis(symbol):
     hist['MACD_signal'] = macd.macd_signal()
     hist['MACD_diff'] = macd.macd_diff()
 
+    # 计算 RSI 指标
+    rsi = ta.momentum.RSIIndicator(hist['收盘'])
+    hist['RSI'] = rsi.rsi()
+
+    # 将 NaN 替换为 0
+    hist['RSI'].fillna(0, inplace=True)
+
     analysis_data = {
         "symbol": symbol,
         "kline": [{"date": row["日期"], "value": row["收盘"]} for index, row in hist.iterrows()],
         "macd": [], 
         "volume": [{"date": row["日期"], "value": row["成交量"]} for index, row in hist.iterrows()],
-        "rsi": [],  # 这里可以添加 RSI 计算逻辑
+        "rsi": [{"date": row["日期"], "value": row["RSI"]} for index, row in hist.iterrows()],
         "signals": []  # 这里可以添加买入卖出信号逻辑
     }
     return analysis_data
