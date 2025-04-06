@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from trading.strategy import execute_strategy
-from trading.stocks import get_stocks, get_stock_analysis, get_stock_strategy
+from trading.stocks import get_stocks_from_codes, get_stock_analysis, get_stock_strategy
 from auth import requires_auth
 from config import Config
 import logging
@@ -33,10 +33,18 @@ def execute_trading_strategy():
         logging.error(f"Error executing trading strategy: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-@app.route('/stocks', methods=['GET'])
+@app.route('/stocks', methods=['POST'])
 def stocks():
     try:
-        return jsonify(get_stocks())
+        # 从请求体中获取股票代码列表
+        stock_codes = request.json.get("codes", [])
+        if not stock_codes:
+            # 如果没有提供股票代码，返回空数据
+            return jsonify({"success": True, "data": []})
+
+        # 调用 get_stocks_from_codes 方法获取股票信息
+        stock_data = get_stocks_from_codes(stock_codes)
+        return jsonify({"success": True, "data": stock_data})
     except Exception as e:
         logging.error(f"Error fetching stocks: {e}")
         return jsonify({"error": "Internal Server Error"}), 500

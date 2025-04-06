@@ -3,14 +3,50 @@ import logging
 from datetime import datetime, timedelta
 import akshare as ak
 import ta  # 导入 ta 库
+import time
 
-def get_stocks():
-    # 模拟股票数据
-    stocks = [
-        {"symbol": "000001", "price": 150},
-        {"symbol": "600941", "price": 340},
-    ]
-    return stocks
+# 全局缓存变量
+_cache = {
+    "all_stock_info": None,
+    "last_fetch_time": 0
+}
+
+def get_stocks_from_codes(stock_codes):
+    logging.info(f"Fetching stock data for: {stock_codes}")
+
+    stock_data = []
+    try:
+        # 检查缓存是否过期（60秒）
+        current_time = time.time()
+        if _cache["all_stock_info"] is None or current_time - _cache["last_fetch_time"] > 60:
+            logging.info("Fetching fresh data from ak.stock_zh_a_spot_em")
+            _cache["all_stock_info"] = ak.stock_zh_a_spot_em()
+            _cache["last_fetch_time"] = current_time
+        else:
+            logging.info("Using cached data for ak.stock_zh_a_spot_em")
+
+        all_stock_info = _cache["all_stock_info"]
+    except Exception as e:
+        logging.warning(f"Error fetching all stock data: {e}")
+        return stock_data
+
+    for code in stock_codes:
+        try:
+            # 从获取的所有股票数据中筛选目标股票
+            stock_row = all_stock_info[all_stock_info['代码'] == code]
+            if not stock_row.empty:
+                stock_data.append({
+                    "code": code,
+                    "name": stock_row.iloc[0]['名称'],
+                    "price": stock_row.iloc[0]['最新价'],
+                    "change": stock_row.iloc[0]['涨跌幅']
+                })
+            else:
+                logging.warning(f"Stock code {code} not found in all_stock_info")
+        except Exception as e:
+            logging.warning(f"Error processing data for {code}: {e}")
+
+    return stock_data
 
 def get_stock_analysis(symbol):
     logging.info(f"Fetching data for {symbol}")  # 添加日志记录
@@ -124,6 +160,19 @@ def get_stock_strategy(symbol):
         })
 
     return {"symbol": symbol, "strategy_results": results}
+
+
+
+def get_stock_add(symbol):
+    return
+
+def get_stock_delete(symbol):
+    return
+
+
+
+
+
 
 # 测试其他股票代码和日期范围
 if __name__ == "__main__":
