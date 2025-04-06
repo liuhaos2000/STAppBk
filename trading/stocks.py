@@ -56,6 +56,16 @@ def get_stock_analysis(symbol):
     }
     return analysis_data
 
+
+
+def get_stock_strategy(symbol):
+    analysis_data = {
+        "symbol": symbol
+    }
+    return analysis_data
+
+
+
 # 测试其他股票代码和日期范围
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

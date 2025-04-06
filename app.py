@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from trading.strategy import execute_strategy
-from trading.stocks import get_stocks, get_stock_analysis
+from trading.stocks import get_stocks, get_stock_analysis, get_stock_strategy
 from auth import requires_auth
 from config import Config
 import logging
@@ -63,6 +63,18 @@ def stock_analysis(symbol):
             return jsonify({"error": "Stock analysis not found"}), 404
     except Exception as e:
         logging.error(f"Error fetching stock analysis for {symbol}: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@app.route('/stocks/<symbol>/strategy', methods=['GET'])
+def stock_strategy(symbol):
+    try:
+        strategy = get_stock_strategy(symbol)
+        if strategy:
+            return jsonify(strategy)
+        else:
+            return jsonify({"error": "Stock strategy not found"}), 404
+    except Exception as e:
+        logging.error(f"Error fetching stock strategy for {symbol}: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/stocks/<symbol>/chart', methods=['GET'])
