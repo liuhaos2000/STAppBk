@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from trading.strategy import execute_strategy
 from trading.stocks import get_stocks_from_codes, get_stock_analysis, get_stock_strategy
+from trading.rsi_search import get_stocks_with_low_rsi  # 导入 RSI 搜索逻辑
 from auth import requires_auth
 from config import Config
 import logging
@@ -96,6 +97,16 @@ def stock_chart(symbol):
             return jsonify({"error": "Stock chart not found"}), 404
     except Exception as e:
         logging.error(f"Error fetching stock chart for {symbol}: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@app.route('/stocks/search-rsi', methods=['GET'])
+def search_rsi():
+    try:
+        # 调用 RSI 搜索逻辑
+        stocks = get_stocks_with_low_rsi()
+        return jsonify({"success": True, "data": stocks})
+    except Exception as e:
+        logging.error(f"Error searching RSI: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 # 全局错误处理
