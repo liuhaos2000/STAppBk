@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import akshare as ak
 import ta  # 导入 ta 库
 import time
+import pandas as pd  # 添加 pandas 库
 
 # 全局缓存变量
 _cache = {
@@ -38,8 +39,8 @@ def get_stocks_from_codes(stock_codes):
                 stock_data.append({
                     "code": code,
                     "name": stock_row.iloc[0]['名称'],
-                    "price": stock_row.iloc[0]['最新价'],
-                    "change": stock_row.iloc[0]['涨跌幅']
+                    "price": stock_row.iloc[0]['最新价'] if not pd.isna(stock_row.iloc[0]['最新价']) else 0,  # 处理 NaN
+                    "change": stock_row.iloc[0]['涨跌幅'] if not pd.isna(stock_row.iloc[0]['涨跌幅']) else 0  # 处理 NaN
                 })
             else:
                 logging.warning(f"Stock code {code} not found in all_stock_info")

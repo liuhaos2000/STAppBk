@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from trading.strategy import execute_strategy
 from trading.stocks import get_stocks_from_codes, get_stock_analysis, get_stock_strategy
-from trading.rsi_search import get_stocks_with_low_rsi  # 导入 RSI 搜索逻辑
+from trading.search_rsi import get_stocks_with_low_rsi  # 导入 RSI 搜索逻辑
 from auth import requires_auth
 from config import Config
 import logging
